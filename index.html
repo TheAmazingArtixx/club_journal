@@ -1,1 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Personnel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        button.secondary {
+            background: #666;
+        }
+
+        .login-form, .article-form, .config-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .article {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .article h2 {
+            margin-bottom: 10px;
+        }
+
+        .article-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .article-content {
+            white-space: pre-wrap;
+            line-height: 1.8;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: #d32f2f;
+            margin: 10px 0;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 4px;
+        }
+
+        .success {
+            color: #2e7d32;
+            margin: 10px 0;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+        }
+
+        .info {
+            color: #1976d2;
+            margin: 10px 0;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+        }
+
+        .debug {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px 0;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            header, .login-form, .article-form, .article, .config-section {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mon Blog</h1>
+            <div id="userInfo" class="user-info hidden">
+                <span>Connecté en tant que: <strong id="currentUser"></strong></span>
+                <button onclick="logout()">Déconnexion</button>
+            </div>
+        </header>
+
+        <!-- Section de configuration -->
+        <div id="configSection" class="config-section">
+            <h2>⚙️ Configuration</h2>
+            <p>Configurez d'abord vos accès Supabase et GitHub</p>
+            
+            <label>URL Supabase:</label>
+            <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
+            
+            <label>Clé Supabase (anon public):</label>
+            <input type="text" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+            
+            <label>URL du fichier users.json (GitHub raw):</label>
+            <input type="text" id="usersJsonUrl" placeholder="https://raw.githubusercontent.com/username/repo/main/users.json">
+            
+            <button onclick="saveConfig()">💾 Sauvegarder et Continuer</button>
+            <div id="configMessage"></div>
+            <div id="debugInfo" class="debug hidden"></div>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <div id="loginSection" class="login-form hidden">
+            <h2>Connexion</h2>
+            <input type="text" id="username" placeholder="Nom d'utilisateur">
+            <input type="password" id="password" placeholder="Mot de passe">
+            <div id="loginError" class="error hidden"></div>
+            <button onclick="login()">Se connecter</button>
+        </div>
+
+        <!-- Formulaire de création d'article -->
+        <div id="articleFormSection" class="article-form hidden">
+            <h2>Créer un nouvel article</h2>
+            <input type="text" id="articleAuthor" placeholder="Auteur">
+            <input type="text" id="articleTitle" placeholder="Titre de l'article">
+            <textarea id="articleContent" placeholder="Contenu de l'article..."></textarea>
+            <input type="date" id="articleDate">
+            <div id="formMessage"></div>
+            <button onclick="createArticle()">Publier l'article</button>
+        </div>
+
+        <!-- Liste des articles -->
+        <div id="articlesSection" class="hidden">
+            <h2 style="margin-bottom: 20px;">Articles récents</h2>
+            <div id="articlesList"></div>
+        </div>
+    </div>
+
+    <script>
+        let supabase;
+        let currentUsername = null;
+        let users = {};
+        let config = {
+            supabaseUrl: '',
+            supabaseKey: '',
+            usersJsonUrl: ''
+        };
+
+        // Charger la configuration depuis localStorage
+        function loadConfig() {
+            const saved = localStorage.getItem('blogConfig');
+            if (saved) {
+                config = JSON.parse(saved);
+                document.getElementById('supabaseUrl').value = config.supabaseUrl;
+                document.getElementById('supabaseKey').value = config.supabaseKey;
+                document.getElementById('usersJsonUrl').value = config.usersJsonUrl;
+                
+                if (config.supabaseUrl && config.supabaseKey && config.usersJsonUrl) {
+                    initWithConfig();
+                }
+            }
+        }
+
+        // Sauvegarder la configuration
+        async function saveConfig() {
+            const supabaseUrl = document.getElementById('supabaseUrl').value.trim();
+            const supabaseKey = document.getElementById('supabaseKey').value.trim();
+            const usersJsonUrl = document.getElementById('usersJsonUrl').value.trim();
+            const messageDiv = document.getElementById('configMessage');
+            const debugDiv = document.getElementById('debugInfo');
+
+            if (!supabaseUrl || !supabaseKey || !usersJsonUrl) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = '❌ Veuillez remplir tous les champs';
+                return;
+            }
+
+            config = { supabaseUrl, supabaseKey, usersJsonUrl };
+            localStorage.setItem('blogConfig', JSON.stringify(config));
+
+            messageDiv.className = 'info';
+            messageDiv.textContent = '⏳ Test de la configuration...';
+            debugDiv.classList.remove('hidden');
+            debugDiv.innerHTML = 'Test en cours...<br>';
+
+            // Tester la connexion
+            try {
+                // Test Supabase
+                debugDiv.innerHTML += '1. Test connexion Supabase...<br>';
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                const { data, error } = await supabase.from('articles').select('count');
+                
+                if (error) {
+                    debugDiv.innerHTML += `❌ Erreur Supabase: ${error.message}<br>`;
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = '❌ Erreur de connexion à Supabase. Vérifiez vos identifiants.';
+                    return;
+                }
+                debugDiv.innerHTML += '✅ Connexion Supabase OK<br>';
+
+                // Test GitHub
+                debugDiv.innerHTML += '2. Test chargement users.json...<br>';
+                const response = await fetch(usersJsonUrl);
+                
+                if (!response.ok) {
+                    debugDiv.innerHTML += `❌ Erreur HTTP: ${response.status}<br>`;
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = `❌ Impossible de charger users.json (erreur ${response.status})`;
+                    return;
+                }
+                
+                const userData = await response.json();
+                debugDiv.innerHTML += `✅ Fichier chargé: ${JSON.stringify(userData)}<br>`;
+                
+                if (!userData.users) {
+                    debugDiv.innerHTML += '❌ Format invalide: propriété "users" manquante<br>';
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = '❌ Format de users.json invalide. Il doit contenir une propriété "users"';
+                    return;
+                }
+
+                users = userData.users;
+                debugDiv.innerHTML += `✅ ${Object.keys(users).length} utilisateurs trouvés<br>`;
+
+                messageDiv.className = 'success';
+                messageDiv.textContent = '✅ Configuration réussie !';
+
+                // Afficher la section de connexion
+                setTimeout(() => {
+                    document.getElementById('configSection').classList.add('hidden');
+                    document.getElementById('loginSection').classList.remove('hidden');
+                    document.getElementById('articlesSection').classList.remove('hidden');
+                    loadArticles();
+                }, 1500);
+
+            } catch (error) {
+                debugDiv.innerHTML += `❌ Erreur: ${error.message}<br>`;
+                messageDiv.className = 'error';
+                messageDiv.textContent = '❌ Erreur: ' + error.message;
+            }
+        }
+
+        // Initialiser avec la config sauvegardée
+        async function initWithConfig() {
+            try {
+                supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseKey);
+                const response = await fetch(config.usersJsonUrl);
+                const data = await response.json();
+                users = data.users;
+
+                document.getElementById('configSection').classList.add('hidden');
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('articlesSection').classList.remove('hidden');
+                
+                loadArticles();
+            } catch (error) {
+                console.error('Erreur d\'initialisation:', error);
+                document.getElementById('configSection').classList.remove('hidden');
+            }
+        }
+
+        // Vérifier si l'utilisateur est admin
+        function isAdmin() {
+            return currentUsername === 'admin';
+        }
+
+        // Connexion
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (!username || !password) {
+                errorDiv.textContent = '❌ Veuillez remplir tous les champs';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (users[username] && users[username] === password) {
+                currentUsername = username;
+                errorDiv.classList.add('hidden');
+                
+                // Afficher l'interface connectée
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('articleFormSection').classList.remove('hidden');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('currentUser').textContent = username + (isAdmin() ? ' (Admin)' : '');
+                
+                // Pré-remplir l'auteur
+                document.getElementById('articleAuthor').value = username;
+                
+                // Recharger les articles avec le bon filtre
+                loadArticles();
+            } else {
+                errorDiv.textContent = '❌ Nom d\'utilisateur ou mot de passe incorrect';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // Déconnexion
+        function logout() {
+            currentUsername = null;
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('articleFormSection').classList.add('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('articleAuthor').value = '';
+            document.getElementById('articleTitle').value = '';
+            document.getElementById('articleContent').value = '';
+            document.getElementById('formMessage').textContent = '';
+            loadArticles();
+        }
+
+        // Créer un article
+        async function createArticle() {
+            const author = document.getElementById('articleAuthor').value.trim();
+            const title = document.getElementById('articleTitle').value.trim();
+            const content = document.getElementById('articleContent').value.trim();
+            const date = document.getElementById('articleDate').value;
+            const messageDiv = document.getElementById('formMessage');
+
+            if (!author || !title || !content || !date) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = '❌ Veuillez remplir tous les champs';
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('articles')
+                    .insert([
+                        {
+                            author: author,
+                            title: title,
+                            content: content,
+                            date: date,
+                            created_by: currentUsername
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                messageDiv.className = 'success';
+                messageDiv.textContent = '✅ Article publié avec succès !';
+                
+                // Réinitialiser le formulaire
+                document.getElementById('articleTitle').value = '';
+                document.getElementById('articleContent').value = '';
+                document.getElementById('articleDate').valueAsDate = new Date();
+                
+                // Recharger les articles
+                await loadArticles();
+                
+                // Effacer le message après 3 secondes
+                setTimeout(() => {
+                    messageDiv.textContent = '';
+                }, 3000);
+            } catch (error) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = '❌ Erreur lors de la publication: ' + error.message;
+            }
+        }
+
+        // Charger les articles
+        async function loadArticles() {
+            if (!supabase) return;
+
+            try {
+                let query = supabase
+                    .from('articles')
+                    .select('*');
+
+                // Si l'utilisateur n'est pas admin, filtrer par auteur
+                if (!isAdmin() && currentUsername) {
+                    query = query.eq('created_by', currentUsername);
+                }
+
+                const { data, error } = await query.order('date', { ascending: false });
+
+                if (error) throw error;
+
+                displayArticles(data);
+            } catch (error) {
+                console.error('Erreur lors du chargement des articles:', error);
+                document.getElementById('articlesList').innerHTML = '<p class="error">❌ Erreur lors du chargement des articles</p>';
+            }
+        }
+
+        // Afficher les articles
+        function displayArticles(articles) {
+            const listDiv = document.getElementById('articlesList');
+            
+            if (!articles || articles.length === 0) {
+                if (currentUsername) {
+                    listDiv.innerHTML = '<p>Aucun article pour le moment.</p>';
+                } else {
+                    listDiv.innerHTML = '<p>Connectez-vous pour voir les articles.</p>';
+                }
+                return;
+            }
+
+            listDiv.innerHTML = articles.map(article => `
+                <div class="article">
+                    <h2>${escapeHtml(article.title)}</h2>
+                    <div class="article-meta">
+                        Par ${escapeHtml(article.author)} • ${formatDate(article.date)}
+                    </div>
+                    <div class="article-content">${escapeHtml(article.content)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Formater la date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        }
+
+        // Échapper le HTML pour la sécurité
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialiser l'application
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('articleDate').valueAsDate = new Date();
+            loadConfig();
+        });
+    </script>
+</body>
+</html>
