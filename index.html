@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Personnel</title>
+    <title>📝 Journal de Classe</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -13,101 +13,202 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
 
         header {
             background: white;
-            padding: 30px;
+            padding: 40px;
             margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         h1 {
-            font-size: 2em;
+            font-size: 2.5em;
             margin-bottom: 10px;
+            color: #667eea;
+            position: relative;
+        }
+
+        h1::before {
+            content: '📚 ';
+        }
+
+        .subtitle {
+            color: #666;
+            font-style: italic;
+            font-size: 1.1em;
         }
 
         .user-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+            color: white;
         }
 
         button {
-            background: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 30px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         button:hover {
-            background: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
-        button.secondary {
-            background: #666;
+        button.logout {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
         .login-form, .article-form, .config-section {
             background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             margin-bottom: 30px;
+            animation: slideIn 0.5s ease;
         }
 
-        input, textarea {
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px 0;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, textarea, select {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
             font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         textarea {
-            min-height: 200px;
+            min-height: 250px;
             resize: vertical;
+        }
+
+        .formatting-toolbar {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .formatting-toolbar button {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
         }
 
         .article {
             background: white;
-            padding: 30px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 35px;
+            margin-bottom: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s;
+            animation: slideIn 0.5s ease;
+        }
+
+        .article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
         }
 
         .article h2 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            color: #333;
         }
 
         .article-meta {
-            color: #666;
+            color: #999;
             font-size: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .article-meta::before {
+            content: '✍️ ';
         }
 
         .article-content {
             white-space: pre-wrap;
             line-height: 1.8;
+            font-size: 16px;
         }
 
         .hidden {
@@ -115,43 +216,53 @@
         }
 
         .error {
-            color: #d32f2f;
-            margin: 10px 0;
-            padding: 10px;
-            background: #ffebee;
-            border-radius: 4px;
+            color: #e53e3e;
+            margin: 15px 0;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 10px;
+            border-left: 4px solid #e53e3e;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
 
         .success {
-            color: #2e7d32;
-            margin: 10px 0;
-            padding: 10px;
-            background: #e8f5e9;
-            border-radius: 4px;
+            color: #38a169;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0fff4;
+            border-radius: 10px;
+            border-left: 4px solid #38a169;
+            animation: slideIn 0.5s;
         }
 
         .info {
-            color: #1976d2;
-            margin: 10px 0;
-            padding: 10px;
-            background: #e3f2fd;
-            border-radius: 4px;
+            color: #3182ce;
+            margin: 15px 0;
+            padding: 15px;
+            background: #ebf8ff;
+            border-radius: 10px;
+            border-left: 4px solid #3182ce;
         }
 
         .debug {
-            background: #fafafa;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
         }
 
-        label {
-            display: block;
-            margin: 15px 0 5px 0;
-            font-weight: 500;
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
         }
 
         @media (max-width: 600px) {
@@ -160,11 +271,20 @@
             }
 
             header, .login-form, .article-form, .article, .config-section {
-                padding: 20px;
+                padding: 25px;
             }
 
             h1 {
-                font-size: 1.5em;
+                font-size: 1.8em;
+            }
+
+            .formatting-toolbar {
+                gap: 5px;
+            }
+
+            .formatting-toolbar button {
+                padding: 6px 10px;
+                font-size: 12px;
             }
         }
     </style>
@@ -172,26 +292,27 @@
 <body>
     <div class="container">
         <header>
-            <h1>Mon Blog</h1>
+            <h1>Journal de Classe</h1>
+            <p class="subtitle">Partagez vos idées et découvertes ! 🚀</p>
             <div id="userInfo" class="user-info hidden">
-                <span>Connecté en tant que: <strong id="currentUser"></strong></span>
-                <button onclick="logout()">Déconnexion</button>
+                <span>👤 Connecté en tant que: <strong id="currentUser"></strong></span>
+                <button class="logout" onclick="logout()">🚪 Déconnexion</button>
             </div>
         </header>
 
         <!-- Section de configuration -->
         <div id="configSection" class="config-section">
-            <h2>⚙️ Configuration</h2>
+            <h2><span class="emoji">⚙️</span>Configuration</h2>
             <p>Configurez d'abord vos accès Supabase et GitHub</p>
             
-            <label>URL Supabase:</label>
-            <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
+            <label>🔗 URL Supabase:</label>
+            <input type="text" id="supabaseUrl" placeholder="https://xnbhtnrnngghumegyyzr.supabase.co">
             
-            <label>Clé Supabase (anon public):</label>
-            <input type="text" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+            <label>🔑 Clé Supabase (anon public):</label>
+            <input type="text" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuYmh0bnJubmdnaHVtZWd5eXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NDUyNTIsImV4cCI6MjA4MDQyMTI1Mn0.Z0A3dFJ38SNT3wwJxbfqMcEKXJbGdwoGSMYfkAk_9i8">
             
-            <label>URL du fichier users.json (GitHub raw):</label>
-            <input type="text" id="usersJsonUrl" placeholder="https://raw.githubusercontent.com/username/repo/main/users.json">
+            <label>📁 URL du fichier users.json (GitHub raw):</label>
+            <input type="text" id="usersJsonUrl" placeholder="https://raw.githubusercontent.com/TheAmazingArtixx/club_journal/refs/heads/main/users.json">
             
             <button onclick="saveConfig()">💾 Sauvegarder et Continuer</button>
             <div id="configMessage"></div>
@@ -200,27 +321,52 @@
 
         <!-- Formulaire de connexion -->
         <div id="loginSection" class="login-form hidden">
-            <h2>Connexion</h2>
-            <input type="text" id="username" placeholder="Nom d'utilisateur">
-            <input type="password" id="password" placeholder="Mot de passe">
+            <h2><span class="emoji">🔐</span>Connexion</h2>
+            <label>👤 Nom d'utilisateur:</label>
+            <input type="text" id="username" placeholder="Entrez votre nom d'utilisateur">
+            <label>🔒 Mot de passe:</label>
+            <input type="password" id="password" placeholder="Entrez votre mot de passe">
             <div id="loginError" class="error hidden"></div>
-            <button onclick="login()">Se connecter</button>
+            <button onclick="login()">🚀 Se connecter</button>
         </div>
 
         <!-- Formulaire de création d'article -->
         <div id="articleFormSection" class="article-form hidden">
-            <h2>Créer un nouvel article</h2>
-            <input type="text" id="articleAuthor" placeholder="Auteur">
-            <input type="text" id="articleTitle" placeholder="Titre de l'article">
-            <textarea id="articleContent" placeholder="Contenu de l'article..."></textarea>
+            <h2><span class="emoji">✍️</span>Créer un nouvel article</h2>
+            
+            <label>👤 Auteur:</label>
+            <input type="text" id="articleAuthor" placeholder="Votre nom">
+            
+            <label>📌 Titre de l'article:</label>
+            <input type="text" id="articleTitle" placeholder="Un titre accrocheur...">
+            
+            <label>📝 Contenu:</label>
+            <div class="formatting-toolbar">
+                <button onclick="insertFormat('**', '**')">🅱️ Gras</button>
+                <button onclick="insertFormat('*', '*')">🅸 Italique</button>
+                <button onclick="insertFormat('__', '__')">🆄 Souligné</button>
+                <button onclick="insertFormat('# ', '')">📰 Titre</button>
+                <button onclick="insertFormat('- ', '')">📋 Liste</button>
+            </div>
+            <textarea id="articleContent" placeholder="Écrivez votre article ici...
+
+💡 Astuces de formatage:
+**texte** pour mettre en gras
+*texte* pour mettre en italique
+__texte__ pour souligner
+# Titre pour un grand titre
+- élément pour une liste"></textarea>
+            
+            <label>📅 Date:</label>
             <input type="date" id="articleDate">
+            
             <div id="formMessage"></div>
-            <button onclick="createArticle()">Publier l'article</button>
+            <button onclick="createArticle()">🚀 Publier l'article</button>
         </div>
 
         <!-- Liste des articles -->
         <div id="articlesSection" class="hidden">
-            <h2 style="margin-bottom: 20px;">Articles récents</h2>
+            <h2 style="margin-bottom: 20px; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Articles récents</h2>
             <div id="articlesList"></div>
         </div>
     </div>
@@ -272,9 +418,7 @@
             debugDiv.classList.remove('hidden');
             debugDiv.innerHTML = 'Test en cours...<br>';
 
-            // Tester la connexion
             try {
-                // Test Supabase
                 debugDiv.innerHTML += '1. Test connexion Supabase...<br>';
                 supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
                 const { data, error } = await supabase.from('articles').select('count');
@@ -287,7 +431,6 @@
                 }
                 debugDiv.innerHTML += '✅ Connexion Supabase OK<br>';
 
-                // Test GitHub
                 debugDiv.innerHTML += '2. Test chargement users.json...<br>';
                 const response = await fetch(usersJsonUrl);
                 
@@ -299,7 +442,7 @@
                 }
                 
                 const userData = await response.json();
-                debugDiv.innerHTML += `✅ Fichier chargé: ${JSON.stringify(userData)}<br>`;
+                debugDiv.innerHTML += `✅ Fichier chargé<br>`;
                 
                 if (!userData.users) {
                     debugDiv.innerHTML += '❌ Format invalide: propriété "users" manquante<br>';
@@ -312,9 +455,8 @@
                 debugDiv.innerHTML += `✅ ${Object.keys(users).length} utilisateurs trouvés<br>`;
 
                 messageDiv.className = 'success';
-                messageDiv.textContent = '✅ Configuration réussie !';
+                messageDiv.textContent = '✅ Configuration réussie ! Chargement...';
 
-                // Afficher la section de connexion
                 setTimeout(() => {
                     document.getElementById('configSection').classList.add('hidden');
                     document.getElementById('loginSection').classList.remove('hidden');
@@ -353,6 +495,20 @@
             return currentUsername === 'admin';
         }
 
+        // Insérer du formatage
+        function insertFormat(before, after) {
+            const textarea = document.getElementById('articleContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const replacement = before + selectedText + after;
+            
+            textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+            textarea.focus();
+            textarea.selectionStart = start + before.length;
+            textarea.selectionEnd = start + before.length + selectedText.length;
+        }
+
         // Connexion
         function login() {
             const username = document.getElementById('username').value.trim();
@@ -369,16 +525,13 @@
                 currentUsername = username;
                 errorDiv.classList.add('hidden');
                 
-                // Afficher l'interface connectée
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('articleFormSection').classList.remove('hidden');
                 document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = username + (isAdmin() ? ' (Admin)' : '');
+                document.getElementById('currentUser').textContent = username + (isAdmin() ? ' 👑 (Admin)' : '');
                 
-                // Pré-remplir l'auteur
                 document.getElementById('articleAuthor').value = username;
                 
-                // Recharger les articles avec le bon filtre
                 loadArticles();
             } else {
                 errorDiv.textContent = '❌ Nom d\'utilisateur ou mot de passe incorrect';
@@ -431,17 +584,14 @@
                 if (error) throw error;
 
                 messageDiv.className = 'success';
-                messageDiv.textContent = '✅ Article publié avec succès !';
+                messageDiv.textContent = '✅ Article publié avec succès ! 🎉';
                 
-                // Réinitialiser le formulaire
                 document.getElementById('articleTitle').value = '';
                 document.getElementById('articleContent').value = '';
                 document.getElementById('articleDate').valueAsDate = new Date();
                 
-                // Recharger les articles
                 await loadArticles();
                 
-                // Effacer le message après 3 secondes
                 setTimeout(() => {
                     messageDiv.textContent = '';
                 }, 3000);
@@ -460,7 +610,6 @@
                     .from('articles')
                     .select('*');
 
-                // Si l'utilisateur n'est pas admin, filtrer par auteur
                 if (!isAdmin() && currentUsername) {
                     query = query.eq('created_by', currentUsername);
                 }
@@ -476,15 +625,25 @@
             }
         }
 
+        // Formater le texte markdown simple
+        function formatText(text) {
+            return text
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/__(.+?)__/g, '<u>$1</u>')
+                .replace(/^# (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^- (.+)$/gm, '• $1');
+        }
+
         // Afficher les articles
         function displayArticles(articles) {
             const listDiv = document.getElementById('articlesList');
             
             if (!articles || articles.length === 0) {
                 if (currentUsername) {
-                    listDiv.innerHTML = '<p>Aucun article pour le moment.</p>';
+                    listDiv.innerHTML = '<div class="article"><p>📭 Aucun article pour le moment. Soyez le premier à écrire !</p></div>';
                 } else {
-                    listDiv.innerHTML = '<p>Connectez-vous pour voir les articles.</p>';
+                    listDiv.innerHTML = '<div class="article"><p>🔐 Connectez-vous pour voir les articles.</p></div>';
                 }
                 return;
             }
@@ -493,9 +652,9 @@
                 <div class="article">
                     <h2>${escapeHtml(article.title)}</h2>
                     <div class="article-meta">
-                        Par ${escapeHtml(article.author)} • ${formatDate(article.date)}
+                        ${escapeHtml(article.author)} • ${formatDate(article.date)}
                     </div>
-                    <div class="article-content">${escapeHtml(article.content)}</div>
+                    <div class="article-content">${formatText(escapeHtml(article.content))}</div>
                 </div>
             `).join('');
         }
