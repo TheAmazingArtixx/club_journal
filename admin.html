@@ -1,0 +1,280 @@
+import React, { useState } from 'react';
+import { Users, Lock, Edit2, Trash2, Plus, LogOut, Save, X } from 'lucide-react';
+
+export default function AdminPanel() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  
+  const [users, setUsers] = useState([
+    { id: 1, username: 'alice', password: '1234', email: 'alice@example.com' },
+    { id: 2, username: 'bob', password: '5678', email: 'bob@example.com' },
+    { id: 3, username: 'charlie', password: '9999', email: 'charlie@example.com' }
+  ]);
+  
+  const [editingUser, setEditingUser] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newUser, setNewUser] = useState({ username: '', password: '', email: '' });
+
+  // Connexion admin
+  const handleLogin = () => {
+    setError('');
+    if (password === '5121') {
+      setIsLoggedIn(true);
+    } else {
+      setError('Mot de passe admin incorrect');
+    }
+    setPassword('');
+  };
+
+  // Déconnexion
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setPassword('');
+    setError('');
+  };
+
+  // Ajouter un utilisateur
+  const handleAddUser = () => {
+    if (!newUser.username || !newUser.password || !newUser.email) {
+      setError('Remplis tous les champs');
+      return;
+    }
+    
+    if (users.some(u => u.username === newUser.username)) {
+      setError('Ce nom d\'utilisateur existe déjà');
+      return;
+    }
+    
+    const user = {
+      id: Date.now(),
+      username: newUser.username,
+      password: newUser.password,
+      email: newUser.email
+    };
+    
+    setUsers([...users, user]);
+    setNewUser({ username: '', password: '', email: '' });
+    setShowAddForm(false);
+    setError('');
+  };
+
+  // Supprimer un utilisateur
+  const handleDeleteUser = (id) => {
+    if (confirm('Es-tu sûr de vouloir supprimer cet utilisateur ?')) {
+      setUsers(users.filter(u => u.id !== id));
+    }
+  };
+
+  // Modifier un utilisateur
+  const handleUpdateUser = () => {
+    if (!editingUser.username || !editingUser.password || !editingUser.email) {
+      setError('Remplis tous les champs');
+      return;
+    }
+    
+    setUsers(users.map(u => u.id === editingUser.id ? editingUser : u));
+    setEditingUser(null);
+    setError('');
+  };
+
+  // PAGE DE CONNEXION ADMIN
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="text-white" size={40} />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800">Connexion Admin</h1>
+            <p className="text-gray-600 mt-2">Panel d'administration</p>
+          </div>
+
+          <input
+            type="password"
+            placeholder="Mot de passe admin"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+            className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 focus:border-purple-500 focus:outline-none"
+          />
+
+          {error && (
+            <div className="bg-red-100 text-red-600 p-3 rounded-xl mb-4 text-center">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleLogin}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition"
+          >
+            Se connecter
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // PANEL ADMIN
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 shadow-lg">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Users size={32} />
+            <h1 className="text-2xl font-bold">Panel Admin</h1>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-white text-purple-600 px-4 py-2 rounded-xl font-semibold hover:bg-gray-100 transition"
+          >
+            <LogOut size={20} />
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">Gestion des utilisateurs</h2>
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-600 transition"
+            >
+              <Plus size={20} />
+              Ajouter
+            </button>
+          </div>
+
+          {error && (
+            <div className="bg-red-100 text-red-600 p-3 rounded-xl mb-4">
+              {error}
+            </div>
+          )}
+
+          {showAddForm && (
+            <div className="bg-blue-50 p-6 rounded-xl mb-6 border-2 border-blue-200">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Nouvel utilisateur</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="Nom d'utilisateur"
+                  value={newUser.username}
+                  onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                  className="p-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                />
+                <input
+                  type="text"
+                  placeholder="Mot de passe"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="p-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  className="p-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAddUser}
+                  className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-600"
+                >
+                  <Save size={20} />
+                  Sauvegarder
+                </button>
+                <button
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setNewUser({ username: '', password: '', email: '' });
+                    setError('');
+                  }}
+                  className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-semibold hover:bg-gray-400"
+                >
+                  <X size={20} />
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {users.map(user => (
+              <div key={user.id} className="bg-gray-50 p-4 rounded-xl border-2 border-gray-200">
+                {editingUser?.id === user.id ? (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input
+                      type="text"
+                      value={editingUser.username}
+                      onChange={(e) => setEditingUser({ ...editingUser, username: e.target.value })}
+                      className="p-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none"
+                    />
+                    <input
+                      type="text"
+                      value={editingUser.password}
+                      onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+                      className="p-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none"
+                    />
+                    <input
+                      type="email"
+                      value={editingUser.email}
+                      onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                      className="p-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none"
+                    />
+                    <button
+                      onClick={handleUpdateUser}
+                      className="flex items-center justify-center gap-2 bg-green-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-600"
+                    >
+                      <Save size={20} />
+                      Sauvegarder
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingUser(null);
+                        setError('');
+                      }}
+                      className="flex items-center justify-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-semibold hover:bg-gray-400"
+                    >
+                      <X size={20} />
+                      Annuler
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="font-bold text-gray-800 text-lg">{user.username}</div>
+                      <div className="text-gray-500 text-sm">MDP: {user.password}</div>
+                      <div className="text-gray-500 text-sm">Email: {user.email}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setEditingUser(user)}
+                        className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-600"
+                      >
+                        <Edit2 size={18} />
+                        Modifier
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-red-600"
+                      >
+                        <Trash2 size={18} />
+                        Supprimer
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
