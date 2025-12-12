@@ -576,6 +576,11 @@ __texte__ pour souligner
             }
         }
 
+        // Vérifier si l'utilisateur est admin
+        function isAdmin() {
+            return currentUsername === 'admin';
+        }
+
         // Connexion
         function login() {
             const username = document.getElementById('username').value.trim();
@@ -588,19 +593,15 @@ __texte__ pour souligner
                 return;
             }
 
-            const user = Object.entries(users).find(([uname, udata]) => 
-                uname === username && udata.password === password
-            );
-
-            if (user) {
-                currentUsername = user[0];
-                currentUserData = user[1];
+            if (users[username] && users[username].password === password) {
+                currentUsername = username;
+                currentUserData = users[username];
                 errorDiv.classList.add('hidden');
                 
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('articleFormSection').classList.remove('hidden');
                 document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = username;
+                document.getElementById('currentUser').textContent = username + (isAdmin() ? ' 👑 (Admin)' : '');
                 
                 document.getElementById('articleAuthor').value = username;
                 
@@ -815,16 +816,21 @@ __texte__ pour souligner
             if (!supabase) return;
 
             try {
-                const { data, error } = await supabase
+                let query = supabase
                     .from('articles')
-                    .select('*')
-                    .order('date', { ascending: false });
+                    .select('*');
+
+                if (!isAdmin() && currentUsername) {
+                    query = query.eq('created_by', currentUsername);
+                }
+
+                const { data, error } = await query.order('date', { ascending: false });
 
                 if (error) throw error;
 
                 displayArticles(data);
             } catch (error) {
-                console.error('Erreur:', error);
+                console.error('Erreur lors du chargement des articles:', error);
                 document.getElementById('articlesList').innerHTML = '<p class="error">❌ Erreur lors du chargement</p>';
             }
         }
