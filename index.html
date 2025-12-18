@@ -280,7 +280,7 @@
             if (hideAfter) setTimeout(() => el.textContent = '', 3000);
         }
 
-        function saveConfig() {
+        async function saveConfig() {
             const url = document.getElementById('supabaseUrl').value.trim();
             const key = document.getElementById('supabaseKey').value.trim();
             if (!url || !key) {
@@ -302,7 +302,7 @@
             }
         }
 
-        function login() {
+        async function login() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value;
             if (!u || !p) {
