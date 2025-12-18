@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📝 Club journal</title>
+    <title>📝 Journal de Classe</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -269,6 +269,17 @@
             localStorage.setItem('journalUsers', JSON.stringify(users));
         }
 
+        function show(id) { document.getElementById(id).classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function showMsg(id, txt, cls, hideAfter = true) {
+            const el = document.getElementById(id);
+            el.textContent = txt;
+            el.className = cls || '';
+            if (!cls) el.classList.remove('hidden');
+            if (hideAfter) setTimeout(() => el.textContent = '', 3000);
+        }
+
         function saveConfig() {
             const url = document.getElementById('supabaseUrl').value.trim();
             const key = document.getElementById('supabaseKey').value.trim();
@@ -495,17 +506,6 @@
                 showMsg('articleMsg', '❌ Erreur: ' + e.message, 'error');
             }
         }
-
-        function showMsg(id, txt, cls, hide = true) {
-            const el = document.getElementById(id);
-            el.textContent = txt;
-            el.className = cls || '';
-            if (!cls) el.classList.remove('hidden');
-            if (hide) setTimeout(() => el.textContent = '', 3000);
-        }
-
-        function show(id) { document.getElementById(id).classList.remove('hidden'); }
-        function hide(id) { document.getElementById(id).classList.add('hidden'); }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('date').valueAsDate = new Date();
