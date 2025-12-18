@@ -6,26 +6,15 @@
     <title>📝 Club journal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         header {
             background: white;
             padding: 40px;
@@ -33,61 +22,24 @@
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            color: #3b82f6;
-            position: relative;
-        }
-
-        h1::before {
-            content: '📚 ';
-        }
-
-        .subtitle {
-            color: #666;
-            font-style: italic;
-            font-size: 1.1em;
-        }
-
+        h1 { font-size: 2.5em; margin-bottom: 10px; color: #667eea; }
+        h1::before { content: '📚 '; }
+        .subtitle { color: #666; font-style: italic; font-size: 1.1em; }
         .user-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
             padding: 15px;
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             border-radius: 10px;
             color: white;
-        }
-
-        .user-actions {
-            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
         }
-
         button {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -98,53 +50,22 @@
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        button.logout {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-
-        button.profile {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-        }
-
-        .login-form, .article-form, .config-section, .profile-section {
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        button.logout { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        button.admin-btn { background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); }
+        button.delete { background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%); padding: 8px 15px; font-size: 14px; }
+        button.edit { background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%); padding: 8px 15px; font-size: 14px; }
+        button.small { padding: 8px 20px; font-size: 14px; }
+        .section {
             background: white;
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             margin-bottom: 30px;
-            animation: slideIn 0.5s ease;
         }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h2 {
-            color: #3b82f6;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 5px 0;
-            font-weight: 600;
-            color: #555;
-        }
-
+        h2 { color: #667eea; margin-bottom: 20px; font-size: 1.8em; }
+        h3 { color: #764ba2; margin: 25px 0 15px 0; font-size: 1.4em; }
+        label { display: block; margin: 15px 0 5px 0; font-weight: 600; color: #555; }
         input, textarea, select {
             width: 100%;
             padding: 15px;
@@ -153,739 +74,451 @@
             border-radius: 12px;
             font-size: 15px;
             font-family: inherit;
-            transition: all 0.3s;
         }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        input:focus, textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        textarea { min-height: 250px; resize: vertical; }
+        .hidden { display: none; }
+        .error, .success, .info, .warning {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid;
         }
-
-        textarea {
-            min-height: 250px;
-            resize: vertical;
-        }
-
-        .formatting-toolbar {
+        .error { color: #e53e3e; background: #fff5f5; border-color: #e53e3e; }
+        .success { color: #38a169; background: #f0fff4; border-color: #38a169; }
+        .info { color: #3182ce; background: #ebf8ff; border-color: #3182ce; }
+        .warning { color: #d69e2e; background: #fffaf0; border-color: #d69e2e; }
+        .user-card {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
             display: flex;
-            gap: 10px;
-            margin: 10px 0;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 10px;
         }
-
-        .formatting-toolbar button {
-            padding: 8px 15px;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-
-        .article {
-            background: white;
-            padding: 35px;
-            margin-bottom: 25px;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            transition: transform 0.3s;
-            animation: slideIn 0.5s ease;
-        }
-
-        .article:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-        }
-
-        .article h2 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .article-meta {
-            color: #999;
-            font-size: 14px;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .article-meta::before {
-            content: '✍️ ';
-        }
-
-        .article-content {
-            white-space: pre-wrap;
-            line-height: 1.8;
-            font-size: 16px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .error {
-            color: #e53e3e;
-            margin: 15px 0;
-            padding: 15px;
-            background: #fff5f5;
-            border-radius: 10px;
-            border-left: 4px solid #e53e3e;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .success {
-            color: #38a169;
-            margin: 15px 0;
-            padding: 15px;
-            background: #f0fff4;
-            border-radius: 10px;
-            border-left: 4px solid #38a169;
-            animation: slideIn 0.5s;
-        }
-
-        .info {
-            color: #3182ce;
-            margin: 15px 0;
-            padding: 15px;
-            background: #ebf8ff;
-            border-radius: 10px;
-            border-left: 4px solid #3182ce;
-        }
-
-        .profile-info {
+        .user-card.admin-user { background: linear-gradient(135deg, #fff9e6 0%, #ffe9b3 100%); border-color: #ffd89b; }
+        .user-info-text { flex: 1; min-width: 200px; }
+        .user-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .stats-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin: 20px 0;
         }
-
-        .profile-field {
-            padding: 15px;
-            background: #f0f9ff;
-            border-radius: 12px;
-            border-left: 4px solid #3b82f6;
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
         }
-
-        .profile-field label {
-            margin: 0 0 5px 0;
-            color: #666;
-            font-size: 14px;
+        .stat-number { font-size: 2.5em; font-weight: bold; margin: 10px 0; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
         }
-
-        .profile-field .value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-
-        .emoji {
-            font-size: 1.5em;
-            margin-right: 10px;
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                padding: 15px;
-            }
-
-            header {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            .user-info {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-
-            .user-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .user-actions button {
-                width: 100%;
-            }
-        }
-
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
         @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-
-            header, .login-form, .article-form, .article, .config-section, .profile-section {
-                padding: 25px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            button {
-                width: 100%;
-                padding: 15px;
-            }
+            .container { padding: 10px; }
+            .section { padding: 25px; }
+            h1 { font-size: 1.8em; }
+            button { width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Club Journal</h1>
-            <p class="subtitle">Ecrivez vos articles ! 🚀</p>
+            <h1>Journal de Classe</h1>
+            <p class="subtitle">Partagez vos idées et découvertes ! 🚀</p>
             <div id="userInfo" class="user-info hidden">
-                <span>👤 Connecté en tant que: <strong id="currentUser"></strong></span>
-                <div class="user-actions">
-                    <button class="profile" onclick="showProfile()">👤 Mon Profil</button>
+                <span>👤 <strong id="currentUser"></strong></span>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="small" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);" onclick="showChangePassword()">🔐 Mon mot de passe</button>
+                    <button id="adminBtn" class="admin-btn small hidden" onclick="toggleAdmin()">👑 Admin</button>
                     <button class="logout" onclick="logout()">🚪 Déconnexion</button>
                 </div>
             </div>
         </header>
 
-        <!-- Section de configuration -->
-        <div id="configSection" class="config-section">
-            <h2><span class="emoji">⚙️</span>Configuration</h2>
-            <p>Configuration automatique des accès</p>
-            
+        <div id="configSection" class="section">
+            <h2>⚙️ Configuration</h2>
             <label>🔗 URL Supabase:</label>
             <input type="text" id="supabaseUrl" value="https://xnbhtnrnngghumegyyzr.supabase.co">
-            
-            <label>🔑 Clé Supabase (anon public):</label>
+            <label>🔑 Clé Supabase:</label>
             <input type="text" id="supabaseKey" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuYmh0bnJubmdnaHVtZWd5eXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NDUyNTIsImV4cCI6MjA4MDQyMTI1Mn0.Z0A3dFJ38SNT3wwJxbfqMcEKXJbGdwoGSMYfkAk_9i8">
-            
-            <label>📁 URL du fichier users.json (GitHub raw):</label>
-            <input type="text" id="usersJsonUrl" value="https://raw.githubusercontent.com/TheAmazingArtixx/club_journal/refs/heads/main/users.json">
-            
-            <button onclick="saveConfig()">💾 Sauvegarder et Continuer</button>
-            <div id="configMessage"></div>
+            <button onclick="saveConfig()">💾 Continuer</button>
+            <div id="configMsg"></div>
         </div>
 
-        <!-- Formulaire de connexion -->
-        <div id="loginSection" class="login-form hidden">
-            <h2><span class="emoji">🔐</span>Connexion</h2>
+        <div id="loginSection" class="section hidden">
+            <h2>🔐 Connexion</h2>
             <label>👤 Nom d'utilisateur:</label>
-            <input type="text" id="username" placeholder="Entrez votre nom d'utilisateur">
+            <input type="text" id="username">
             <label>🔒 Mot de passe:</label>
-            <input type="password" id="password" placeholder="Entrez votre mot de passe">
+            <input type="password" id="password">
             <div id="loginError" class="error hidden"></div>
             <button onclick="login()">🚀 Se connecter</button>
         </div>
 
-        <!-- Section Profil -->
-        <div id="profileSection" class="profile-section hidden">
-            <h2><span class="emoji">👤</span>Mon Profil</h2>
-            
-            <div id="profileView">
-                <div class="profile-info">
-                    <div class="profile-field">
-                        <label>Nom d'utilisateur</label>
-                        <div class="value" id="profileUsername"></div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Email</label>
-                        <div class="value" id="profileEmail"></div>
-                    </div>
+        <div id="changePasswordSection" class="section hidden">
+            <h2>🔐 Changer mon mot de passe</h2>
+            <p class="info">⚠️ Attention : une fois changé, utilisez toujours le nouveau mot de passe !</p>
+            <label>🔒 Mot de passe actuel:</label>
+            <input type="password" id="currentPwd">
+            <label>🆕 Nouveau mot de passe:</label>
+            <input type="password" id="newPwd">
+            <label>✅ Confirmer:</label>
+            <input type="password" id="confirmPwd">
+            <div id="changePwdMsg"></div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="changePassword()">💾 Changer</button>
+                <button class="logout" onclick="hideChangePassword()">❌ Annuler</button>
+            </div>
+        </div>
+
+        <div id="adminSection" class="section hidden">
+            <h2>👑 Panel Admin</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>👥 Utilisateurs</div>
+                    <div class="stat-number" id="userCount">0</div>
                 </div>
-                <button onclick="showEditProfile()">✏️ Modifier mes informations</button>
-                <button onclick="showChangePassword()" style="margin-top: 10px;">🔑 Changer mon mot de passe</button>
-                <button onclick="hideProfile()" style="margin-top: 10px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">← Retour</button>
             </div>
-
-            <div id="profileEdit" class="hidden">
-                <label>👤 Nom d'utilisateur:</label>
-                <input type="text" id="editUsername">
-                
-                <label>📧 Email:</label>
-                <input type="email" id="editEmail">
-                
-                <div id="profileEditMessage"></div>
-                <button onclick="updateProfile()">💾 Sauvegarder</button>
-                <button onclick="cancelEditProfile()" style="margin-top: 10px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">❌ Annuler</button>
-            </div>
-
-            <div id="passwordChange" class="hidden">
-                <label>🔒 Mot de passe actuel:</label>
-                <input type="password" id="currentPassword">
-                
-                <label>🔑 Nouveau mot de passe:</label>
-                <input type="password" id="newPassword">
-                
-                <label>🔑 Confirmer le nouveau mot de passe:</label>
-                <input type="password" id="confirmPassword">
-                
-                <div id="passwordChangeMessage"></div>
-                <button onclick="changePassword()">🔐 Changer le mot de passe</button>
-                <button onclick="cancelChangePassword()" style="margin-top: 10px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">❌ Annuler</button>
-            </div>
+            <h3>➕ Ajouter un utilisateur</h3>
+            <label>👤 Nom (ex: PaulMartin):</label>
+            <input type="text" id="addUsername">
+            <label>🔒 Mot de passe:</label>
+            <input type="password" id="addPassword">
+            <button onclick="addUser()">➕ Créer</button>
+            <div id="addMsg"></div>
+            <h3>👥 Liste des utilisateurs</h3>
+            <div id="usersList"></div>
         </div>
 
-        <!-- Formulaire de création d'article -->
-        <div id="articleFormSection" class="article-form hidden">
-            <h2><span class="emoji">✍️</span>Créer un nouvel article</h2>
-            
+        <div id="articleSection" class="section hidden">
+            <h2>✍️ Créer un article</h2>
             <label>👤 Auteur:</label>
-            <input type="text" id="articleAuthor" placeholder="Votre nom">
-            
-            <label>📌 Titre de l'article:</label>
-            <input type="text" id="articleTitle" placeholder="Un titre accrocheur...">
-            
+            <input type="text" id="author">
+            <label>📌 Titre:</label>
+            <input type="text" id="title">
             <label>📝 Contenu:</label>
-            <div class="formatting-toolbar">
-                <button onclick="insertFormat('**', '**')">🅱️ Gras</button>
-                <button onclick="insertFormat('*', '*')">🅸 Italique</button>
-                <button onclick="insertFormat('__', '__')">🆄 Souligné</button>
-                <button onclick="insertFormat('# ', '')">📰 Titre</button>
-                <button onclick="insertFormat('- ', '')">📋 Liste</button>
-            </div>
-            <textarea id="articleContent" placeholder="Écrivez votre article ici...
-
-💡 Astuces de formatage:
-**texte** pour mettre en gras
-*texte* pour mettre en italique
-__texte__ pour souligner
-# Titre pour un grand titre
-- élément pour une liste"></textarea>
-            
+            <textarea id="content" placeholder="Écrivez votre article..."></textarea>
             <label>📅 Date:</label>
-            <input type="date" id="articleDate">
-            
-            <div id="formMessage"></div>
-            <button onclick="createArticle()">🚀 Publier l'article</button>
+            <input type="date" id="date">
+            <div id="articleMsg"></div>
+            <button onclick="createArticle()">🚀 Publier</button>
         </div>
+    </div>
 
-        <!-- Liste des articles -->
-        <div id="articlesSection" class="hidden">
-            <h2 style="margin-bottom: 20px; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Articles récents</h2>
-            <div id="articlesList"></div>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>✏️ Modifier le mot de passe</h2>
+            <label>👤 Utilisateur:</label>
+            <input type="text" id="editUser" disabled style="background: #f0f0f0;">
+            <label>🔒 Nouveau mot de passe:</label>
+            <input type="password" id="editPwd">
+            <div id="editMsg"></div>
+            <div class="modal-buttons">
+                <button class="logout" onclick="closeEdit()">Annuler</button>
+                <button onclick="saveEdit()">💾 Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2 id="confirmTitle">❓ Confirmation</h2>
+            <p id="confirmMsg"></p>
+            <div class="modal-buttons">
+                <button class="logout" onclick="closeConfirm()">Annuler</button>
+                <button class="delete" onclick="doDelete()">🗑️ Supprimer</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let supabase;
-        let currentUsername = null;
-        let currentUserData = null;
-        let users = {};
-        let config = {
-            supabaseUrl: 'https://xnbhtnrnngghumegyyzr.supabase.co',
-            supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuYmh0bnJubmdnaHVtZWd5eXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NDUyNTIsImV4cCI6MjA4MDQyMTI1Mn0.Z0A3dFJ38SNT3wwJxbfqMcEKXJbGdwoGSMYfkAk_9i8',
-            usersJsonUrl: 'https://raw.githubusercontent.com/TheAmazingArtixx/club_journal/refs/heads/main/users.json'
-        };
+        let supabase, currentUsername, users = {}, editingUser, deleteUser;
+        const ADMIN_PWD = '5121';
 
-        // Charger la configuration
-        function loadConfig() {
-            const saved = localStorage.getItem('blogConfig');
-            if (saved) {
-                config = JSON.parse(saved);
-                document.getElementById('supabaseUrl').value = config.supabaseUrl;
-                document.getElementById('supabaseKey').value = config.supabaseKey;
-                document.getElementById('usersJsonUrl').value = config.usersJsonUrl;
-            }
-            
-            if (config.supabaseUrl && config.supabaseKey && config.usersJsonUrl) {
-                initWithConfig();
-            }
+        function loadUsers() {
+            const stored = localStorage.getItem('journalUsers');
+            if (stored) users = JSON.parse(stored);
+            else users = {"admin":"admin2024","SonjayMENAGER":"sonjay123","EthanDROUANT":"ethan123","AxelVOISINE":"axel123","MaximeDEFFOIS":"maxime123","HediMONTGOBERT":"hedi123","BixenteNGUYEN":"bixente123","OscarLAIRE":"oscar123","NathysOGERCOLAS":"nathys123","MathéoPAULBEAUVAIS":"matheo123","GabinMARAIS":"gabin123","MeyssonGUERIN":"meysson123","PaulLIMOUSIN":"paul123","AurélienNANTA":"aurelien123","FanchSCALLIT":"fanch123","PaulSOLEAU":"paulsoleau123"};
         }
 
-        // Sauvegarder la configuration
-        async function saveConfig() {
-            const supabaseUrl = document.getElementById('supabaseUrl').value.trim();
-            const supabaseKey = document.getElementById('supabaseKey').value.trim();
-            const usersJsonUrl = document.getElementById('usersJsonUrl').value.trim();
-            const messageDiv = document.getElementById('configMessage');
+        function saveUsers() {
+            localStorage.setItem('journalUsers', JSON.stringify(users));
+        }
 
-            if (!supabaseUrl || !supabaseKey || !usersJsonUrl) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Veuillez remplir tous les champs';
+        function saveConfig() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+            if (!url || !key) {
+                showMsg('configMsg', '❌ Remplissez tous les champs', 'error');
                 return;
             }
-
-            config = { supabaseUrl, supabaseKey, usersJsonUrl };
-            localStorage.setItem('blogConfig', JSON.stringify(config));
-
-            messageDiv.className = 'info';
-            messageDiv.textContent = '⏳ Test de la configuration...';
-
             try {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                const { error } = await supabase.from('articles').select('count');
-                
-                if (error) {
-                    messageDiv.className = 'error';
-                    messageDiv.textContent = '❌ Erreur de connexion à Supabase';
-                    return;
-                }
-
-                const response = await fetch(usersJsonUrl);
-                if (!response.ok) {
-                    messageDiv.className = 'error';
-                    messageDiv.textContent = `❌ Impossible de charger users.json`;
-                    return;
-                }
-                
-                const userData = await response.json();
-                if (!userData.users) {
-                    messageDiv.className = 'error';
-                    messageDiv.textContent = '❌ Format de users.json invalide';
-                    return;
-                }
-
-                users = userData.users;
-
-                messageDiv.className = 'success';
-                messageDiv.textContent = '✅ Configuration réussie !';
-
+                supabase = window.supabase.createClient(url, key);
+                localStorage.setItem('blogConfig', JSON.stringify({url, key}));
+                loadUsers();
+                saveUsers();
+                showMsg('configMsg', '✅ Configuration OK !', 'success');
                 setTimeout(() => {
-                    document.getElementById('configSection').classList.add('hidden');
-                    document.getElementById('loginSection').classList.remove('hidden');
-                    document.getElementById('articlesSection').classList.remove('hidden');
-                    loadArticles();
-                }, 1500);
-
-            } catch (error) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Erreur: ' + error.message;
+                    hide('configSection');
+                    show('loginSection');
+                }, 1000);
+            } catch(e) {
+                showMsg('configMsg', '❌ Erreur: ' + e.message, 'error');
             }
         }
 
-        // Initialiser avec la config sauvegardée
-        async function initWithConfig() {
-            try {
-                supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseKey);
-                const response = await fetch(config.usersJsonUrl);
-                const data = await response.json();
-                users = data.users;
-
-                document.getElementById('configSection').classList.add('hidden');
-                document.getElementById('loginSection').classList.remove('hidden');
-                document.getElementById('articlesSection').classList.remove('hidden');
-                
-                loadArticles();
-            } catch (error) {
-                console.error('Erreur d\'initialisation:', error);
-                document.getElementById('configSection').classList.remove('hidden');
-            }
-        }
-
-        // Vérifier si l'utilisateur est admin
-        function isAdmin() {
-            return currentUsername === 'admin';
-        }
-
-        // Connexion
         function login() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-
-            if (!username || !password) {
-                errorDiv.textContent = '❌ Veuillez remplir tous les champs';
-                errorDiv.classList.remove('hidden');
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            if (!u || !p) {
+                showMsg('loginError', '❌ Remplissez tous les champs', null, false);
                 return;
             }
-
-            if (users[username] && users[username].password === password) {
-                currentUsername = username;
-                currentUserData = users[username];
-                errorDiv.classList.add('hidden');
-                
-                document.getElementById('loginSection').classList.add('hidden');
-                document.getElementById('articleFormSection').classList.remove('hidden');
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = username + (isAdmin() ? ' 👑 (Admin)' : '');
-                
-                document.getElementById('articleAuthor').value = username;
-                
-                loadArticles();
+            if (users[u] === p) {
+                currentUsername = u;
+                document.getElementById('currentUser').textContent = u + (u === 'admin' ? ' 👑' : '');
+                document.getElementById('author').value = u;
+                hide('loginSection');
+                show('userInfo');
+                show('articleSection');
+                if (u === 'admin') show('adminBtn');
             } else {
-                errorDiv.textContent = '❌ Nom d\'utilisateur ou mot de passe incorrect';
-                errorDiv.classList.remove('hidden');
+                showMsg('loginError', '❌ Identifiants incorrects', null, false);
             }
         }
 
-        // Déconnexion
         function logout() {
             currentUsername = null;
-            currentUserData = null;
-            document.getElementById('loginSection').classList.remove('hidden');
-            document.getElementById('articleFormSection').classList.add('hidden');
-            document.getElementById('profileSection').classList.add('hidden');
-            document.getElementById('userInfo').classList.add('hidden');
+            hide('userInfo');
+            hide('adminBtn');
+            hide('articleSection');
+            hide('adminSection');
+            hide('changePasswordSection');
+            show('loginSection');
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
-            loadArticles();
         }
 
-        // Afficher le profil
-        function showProfile() {
-            document.getElementById('articleFormSection').classList.add('hidden');
-            document.getElementById('profileSection').classList.remove('hidden');
-            document.getElementById('profileView').classList.remove('hidden');
-            document.getElementById('profileEdit').classList.add('hidden');
-            document.getElementById('passwordChange').classList.add('hidden');
-            
-            document.getElementById('profileUsername').textContent = currentUsername;
-            document.getElementById('profileEmail').textContent = currentUserData.email || 'Non défini';
-        }
-
-        // Cacher le profil
-        function hideProfile() {
-            document.getElementById('profileSection').classList.add('hidden');
-            document.getElementById('articleFormSection').classList.remove('hidden');
-        }
-
-        // Afficher l'édition du profil
-        function showEditProfile() {
-            document.getElementById('profileView').classList.add('hidden');
-            document.getElementById('profileEdit').classList.remove('hidden');
-            document.getElementById('editUsername').value = currentUsername;
-            document.getElementById('editEmail').value = currentUserData.email || '';
-        }
-
-        // Annuler l'édition du profil
-        function cancelEditProfile() {
-            document.getElementById('profileEdit').classList.add('hidden');
-            document.getElementById('profileView').classList.remove('hidden');
-            document.getElementById('profileEditMessage').textContent = '';
-        }
-
-        // Mettre à jour le profil
-        function updateProfile() {
-            const newUsername = document.getElementById('editUsername').value.trim();
-            const newEmail = document.getElementById('editEmail').value.trim();
-            const messageDiv = document.getElementById('profileEditMessage');
-
-            if (!newUsername || !newEmail) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Tous les champs sont requis';
+        function toggleAdmin() {
+            if (currentUsername !== 'admin') return;
+            const pwd = prompt('🔐 Mot de passe admin:');
+            if (pwd !== ADMIN_PWD) {
+                alert('❌ Mot de passe incorrect !');
                 return;
             }
-
-            // Vérifier si le nom d'utilisateur existe déjà
-            if (newUsername !== currentUsername && users[newUsername]) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Ce nom d\'utilisateur existe déjà';
-                return;
+            if (document.getElementById('adminSection').classList.contains('hidden')) {
+                hide('articleSection');
+                hide('changePasswordSection');
+                show('adminSection');
+                displayUsers();
+            } else {
+                hide('adminSection');
+                show('articleSection');
             }
-
-            // Mettre à jour localement
-            currentUserData.email = newEmail;
-            if (newUsername !== currentUsername) {
-                users[newUsername] = users[currentUsername];
-                delete users[currentUsername];
-                currentUsername = newUsername;
-            }
-
-            messageDiv.className = 'success';
-            messageDiv.textContent = '✅ Profil mis à jour !';
-            
-            setTimeout(() => {
-                cancelEditProfile();
-                showProfile();
-            }, 1500);
         }
 
-        // Afficher le changement de mot de passe
         function showChangePassword() {
-            document.getElementById('profileView').classList.add('hidden');
-            document.getElementById('passwordChange').classList.remove('hidden');
+            hide('articleSection');
+            hide('adminSection');
+            show('changePasswordSection');
+            document.getElementById('currentPwd').value = '';
+            document.getElementById('newPwd').value = '';
+            document.getElementById('confirmPwd').value = '';
+            document.getElementById('changePwdMsg').textContent = '';
         }
 
-        // Annuler le changement de mot de passe
-        function cancelChangePassword() {
-            document.getElementById('passwordChange').classList.add('hidden');
-            document.getElementById('profileView').classList.remove('hidden');
-            document.getElementById('currentPassword').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
-            document.getElementById('passwordChangeMessage').textContent = '';
+        function hideChangePassword() {
+            hide('changePasswordSection');
+            show('articleSection');
         }
 
-        // Changer le mot de passe
         function changePassword() {
-            const current = document.getElementById('currentPassword').value;
-            const newPass = document.getElementById('newPassword').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const messageDiv = document.getElementById('passwordChangeMessage');
-
-            if (!current || !newPass || !confirm) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Tous les champs sont requis';
-                return;
-            }
-
-            if (current !== currentUserData.password) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Mot de passe actuel incorrect';
-                return;
-            }
-
-            if (newPass !== confirm) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Les mots de passe ne correspondent pas';
-                return;
-            }
-
-            if (newPass.length < 4) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Le mot de passe doit contenir au moins 4 caractères';
-                return;
-            }
-
-            currentUserData.password = newPass;
-            users[currentUsername].password = newPass;
-
-            messageDiv.className = 'success';
-            messageDiv.textContent = '✅ Mot de passe changé avec succès !';
+            const curr = document.getElementById('currentPwd').value;
+            const newP = document.getElementById('newPwd').value;
+            const conf = document.getElementById('confirmPwd').value;
             
+            if (!curr || !newP || !conf) {
+                showMsg('changePwdMsg', '❌ Remplissez tous les champs', 'error');
+                return;
+            }
+            if (users[currentUsername] !== curr) {
+                showMsg('changePwdMsg', '❌ Mot de passe actuel incorrect', 'error');
+                return;
+            }
+            if (newP.length < 4) {
+                showMsg('changePwdMsg', '❌ Le mot de passe doit faire au moins 4 caractères', 'error');
+                return;
+            }
+            if (newP !== conf) {
+                showMsg('changePwdMsg', '❌ Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+            users[currentUsername] = newP;
+            saveUsers();
+            showMsg('changePwdMsg', '✅ Mot de passe changé ! Utilisez-le à la prochaine connexion.', 'success');
             setTimeout(() => {
-                cancelChangePassword();
-            }, 1500);
+                hideChangePassword();
+            }, 2000);
         }
 
-        // Insérer du formatage
-        function insertFormat(before, after) {
-            const textarea = document.getElementById('articleContent');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
-            const replacement = before + selectedText + after;
-            
-            textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
-            textarea.focus();
-            textarea.selectionStart = start + before.length;
-            textarea.selectionEnd = start + before.length + selectedText.length;
-        }
-
-        // Créer un article
-        async function createArticle() {
-            const author = document.getElementById('articleAuthor').value.trim();
-            const title = document.getElementById('articleTitle').value.trim();
-            const content = document.getElementById('articleContent').value.trim();
-            const date = document.getElementById('articleDate').value;
-            const messageDiv = document.getElementById('formMessage');
-
-            if (!author || !title || !content || !date) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Veuillez remplir tous les champs';
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('articles')
-                    .insert([{
-                        author: author,
-                        title: title,
-                        content: content,
-                        date: date,
-                        created_by: currentUsername
-                    }]);
-
-                if (error) throw error;
-
-                messageDiv.className = 'success';
-                messageDiv.textContent = '✅ Article publié avec succès ! 🎉';
-                
-                document.getElementById('articleTitle').value = '';
-                document.getElementById('articleContent').value = '';
-                document.getElementById('articleDate').valueAsDate = new Date();
-                
-                await loadArticles();
-                
-                setTimeout(() => {
-                    messageDiv.textContent = '';
-                }, 3000);
-            } catch (error) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = '❌ Erreur: ' + error.message;
-            }
-        }
-
-        // Charger les articles
-        async function loadArticles() {
-            if (!supabase) return;
-
-            try {
-                let query = supabase
-                    .from('articles')
-                    .select('*');
-
-                if (!isAdmin() && currentUsername) {
-                    query = query.eq('created_by', currentUsername);
-                }
-
-                const { data, error } = await query.order('date', { ascending: false });
-
-                if (error) throw error;
-
-                displayArticles(data);
-            } catch (error) {
-                console.error('Erreur lors du chargement des articles:', error);
-                document.getElementById('articlesList').innerHTML = '<p class="error">❌ Erreur lors du chargement</p>';
-            }
-        }
-
-        // Formater le texte markdown
-        function formatText(text) {
-            return text
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                .replace(/__(.+?)__/g, '<u>$1</u>')
-                .replace(/^# (.+)$/gm, '<h3>$1</h3>')
-                .replace(/^- (.+)$/gm, '• $1');
-        }
-
-        // Afficher les articles
-        function displayArticles(articles) {
-            const listDiv = document.getElementById('articlesList');
-            
-            if (!articles || articles.length === 0) {
-                if (currentUsername) {
-                    listDiv.innerHTML = '<div class="article"><p>📭 Aucun article. Soyez le premier à écrire !</p></div>';
-                } else {
-                    listDiv.innerHTML = '<div class="article"><p>🔐 Connectez-vous pour voir les articles.</p></div>';
-                }
-                return;
-            }
-
-            listDiv.innerHTML = articles.map(article => `
-                <div class="article">
-                    <h2>${escapeHtml(article.title)}</h2>
-                    <div class="article-meta">
-                        ${escapeHtml(article.author)} • ${formatDate(article.date)}
+        function displayUsers() {
+            const list = document.getElementById('usersList');
+            document.getElementById('userCount').textContent = Object.keys(users).length;
+            list.innerHTML = Object.keys(users).map(u => `
+                <div class="user-card ${u === 'admin' ? 'admin-user' : ''}">
+                    <div class="user-info-text">
+                        <strong>${u}</strong> ${u === 'admin' ? '👑' : ''}
+                        <small>Mot de passe: ${users[u].replace(/./g, '•')}</small>
                     </div>
-                    <div class="article-content">${formatText(escapeHtml(article.content))}</div>
+                    <div class="user-actions">
+                        <button class="edit" onclick="editUser('${u}')">✏️ Modifier</button>
+                        ${u !== 'admin' ? `<button class="delete" onclick="confirmDelete('${u}')">🗑️ Supprimer</button>` : ''}
+                    </div>
                 </div>
             `).join('');
         }
 
-        // Formater la date
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        function addUser() {
+            const u = document.getElementById('addUsername').value.trim();
+            const p = document.getElementById('addPassword').value;
+            if (!u || !p) {
+                showMsg('addMsg', '❌ Remplissez tous les champs', 'error');
+                return;
+            }
+            if (users[u]) {
+                showMsg('addMsg', '❌ Cet utilisateur existe déjà', 'error');
+                return;
+            }
+            if (p.length < 4) {
+                showMsg('addMsg', '❌ Le mot de passe doit faire au moins 4 caractères', 'error');
+                return;
+            }
+            users[u] = p;
+            saveUsers();
+            showMsg('addMsg', `✅ ${u} a été créé !`, 'success');
+            document.getElementById('addUsername').value = '';
+            document.getElementById('addPassword').value = '';
+            displayUsers();
         }
 
-        // Échapper le HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function editUser(u) {
+            editingUser = u;
+            document.getElementById('editUser').value = u;
+            document.getElementById('editPwd').value = '';
+            document.getElementById('editMsg').textContent = '';
+            document.getElementById('editModal').style.display = 'block';
         }
 
-        // Initialiser
+        function closeEdit() {
+            document.getElementById('editModal').style.display = 'none';
+            editingUser = null;
+        }
+
+        function saveEdit() {
+            const p = document.getElementById('editPwd').value;
+            if (!p) {
+                showMsg('editMsg', '❌ Entrez un mot de passe', 'error');
+                return;
+            }
+            if (p.length < 4) {
+                showMsg('editMsg', '❌ Au moins 4 caractères', 'error');
+                return;
+            }
+            users[editingUser] = p;
+            saveUsers();
+            showMsg('editMsg', '✅ Mot de passe modifié !', 'success');
+            setTimeout(() => {
+                closeEdit();
+                displayUsers();
+            }, 1000);
+        }
+
+        function confirmDelete(u) {
+            deleteUser = u;
+            document.getElementById('confirmMsg').textContent = `Supprimer ${u} ? Cette action est irréversible.`;
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmModal').style.display = 'none';
+            deleteUser = null;
+        }
+
+        function doDelete() {
+            if (deleteUser && deleteUser !== 'admin') {
+                delete users[deleteUser];
+                saveUsers();
+                displayUsers();
+            }
+            closeConfirm();
+        }
+
+        async function createArticle() {
+            const a = document.getElementById('author').value.trim();
+            const t = document.getElementById('title').value.trim();
+            const c = document.getElementById('content').value.trim();
+            const d = document.getElementById('date').value;
+            if (!a || !t || !c || !d) {
+                showMsg('articleMsg', '❌ Remplissez tous les champs', 'error');
+                return;
+            }
+            try {
+                await supabase.from('articles').insert([{author: a, title: t, content: c, date: d, created_by: currentUsername}]);
+                showMsg('articleMsg', '✅ Article publié ! 🎉', 'success');
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+            } catch(e) {
+                showMsg('articleMsg', '❌ Erreur: ' + e.message, 'error');
+            }
+        }
+
+        function showMsg(id, txt, cls, hide = true) {
+            const el = document.getElementById(id);
+            el.textContent = txt;
+            el.className = cls || '';
+            if (!cls) el.classList.remove('hidden');
+            if (hide) setTimeout(() => el.textContent = '', 3000);
+        }
+
+        function show(id) { document.getElementById(id).classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('articleDate').valueAsDate = new Date();
-            loadConfig();
+            document.getElementById('date').valueAsDate = new Date();
+            const cfg = localStorage.getItem('blogConfig');
+            if (cfg) {
+                const {url, key} = JSON.parse(cfg);
+                document.getElementById('supabaseUrl').value = url;
+                document.getElementById('supabaseKey').value = key;
+                supabase = window.supabase.createClient(url, key);
+                loadUsers();
+                hide('configSection');
+                show('loginSection');
+            }
         });
     </script>
 </body>
